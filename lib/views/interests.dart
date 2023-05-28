@@ -8,7 +8,9 @@ import 'package:mypocketguide/providers/models_provider.dart';
 import 'package:mypocketguide/widgets/text_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:selectable_container/selectable_container.dart';
-import 'package:home.dart';
+
+import '../home.dart';
+
 
 class Interest extends StatefulWidget {
   const Interest({Key? key}) : super(key: key);
@@ -111,9 +113,7 @@ class _InterestState extends State<Interest> {
                     ),
                     TextButton(
                       onPressed:() async {
-                          await sendMessageFCT(
-                              modelsProvider: modelsProvider,
-                              chatProvider: chatProvider);
+                          
                               Navigator.push(context, MaterialPageRoute(builder: (context)=>HomeScreen()));
                         }, 
                       child: Text("Done!",style: TextStyle(fontFamily: "poppins",fontSize: 20),))
