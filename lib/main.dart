@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:mypocketguide/providers/models_provider.dart';
 import 'package:mypocketguide/screens/signin.dart';
 import 'package:mypocketguide/views/details.dart';
@@ -8,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'constants/constants.dart';
 import 'providers/chats_provider.dart';
 import 'screens/chat_screen.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -19,6 +21,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -38,6 +41,7 @@ class MyApp extends StatelessWidget {
             )),
         home: const Initial(),
       ),
+
     );
   }
 }
