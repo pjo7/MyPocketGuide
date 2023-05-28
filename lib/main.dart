@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:mypocketguide/home.dart';
 
+import 'package:mypocketguide/providers/models_provider.dart';
+import 'package:mypocketguide/screens/signin.dart';
+import 'package:mypocketguide/views/details.dart';
+import 'package:mypocketguide/views/first.dart';
+import 'package:provider/provider.dart';
+
+import 'constants/constants.dart';
+import 'providers/chats_provider.dart';
+import 'screens/chat_screen.dart';
 
 
 void main() {
@@ -13,13 +21,27 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => ModelsProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => ChatProvider(),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'Flutter ChatBOT',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+            scaffoldBackgroundColor: scaffoldBackgroundColor,
+            appBarTheme: AppBarTheme(
+              color: cardColor,
+            )),
+        home: const Initial(),
       ),
-      home: HomeScreen(),
+
     );
   }
 }
