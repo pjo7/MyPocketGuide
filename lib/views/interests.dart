@@ -1,7 +1,12 @@
 
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:mypocketguide/providers/chats_provider.dart';
+import 'package:mypocketguide/providers/models_provider.dart';
+import 'package:mypocketguide/widgets/text_widget.dart';
+import 'package:provider/provider.dart';
 import 'package:selectable_container/selectable_container.dart';
 
 class Interest extends StatefulWidget {
@@ -13,16 +18,37 @@ class Interest extends StatefulWidget {
 
 List<String>interest=[];
 int i=0;
+bool _isTyping = false;
+
+  //late ScrollController _listScrollController;
+  late FocusNode focusNode;
 
 class _InterestState extends State<Interest> {
   List<Interests> intrs = Interests.intrs;
   TextEditingController intrest=TextEditingController();
 
   @override
+  void initState() {
+   // _listScrollController = ScrollController();
+    //textEditingController = TextEditingController();
+    focusNode = FocusNode();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+   // _listScrollController.dispose();
+   // textEditingController.dispose();
+    focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final double width=MediaQuery.of(context).size.width;
     final double height=MediaQuery.of(context).size.height;
-
+   final modelsProvider = Provider.of<ModelsProvider>(context);
+    final chatProvider = Provider.of<ChatProvider>(context);
     return Container(
        decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -82,7 +108,14 @@ class _InterestState extends State<Interest> {
                           ),
                         ),
                     ),
-                    TextButton(onPressed: (){}, child: Text("Done!",style: TextStyle(fontFamily: "poppins",fontSize: 20),))
+                    TextButton(
+                      onPressed:() async {
+                          await sendMessageFCT(
+                              modelsProvider: modelsProvider,
+                              chatProvider: chatProvider);
+                              //Navigator.push(context, MaterialPageRoute(builder: (context)=>Home()))
+                        }, 
+                      child: Text("Done!",style: TextStyle(fontFamily: "poppins",fontSize: 20),))
                 //const Expanded(child: SelectableContainerGrid()),
               ],
             ),
@@ -91,6 +124,44 @@ class _InterestState extends State<Interest> {
       ),
       ),
     );
+  }
+
+  Future<void> sendMessageFCT(
+      {required ModelsProvider modelsProvider,
+      required ChatProvider chatProvider}) async {
+    try {
+      String msg = intrest.text;
+      
+      setState(() {
+        _isTyping = true;
+        // chatList.add(ChatModel(msg: textEditingController.text, chatIndex: 0));
+        chatProvider.addUserMessage(msg: msg);
+        //textEditingController.clear();
+        focusNode.unfocus();
+      });
+      await chatProvider.sendMessageAndGetAnswers(
+        
+          msg: msg, chosenModelId: modelsProvider.getCurrentModel);
+         
+      // chatList.addAll(await ApiService.sendMessage(
+      //   message: textEditingController.text,
+      //   modelId: modelsProvider.getCurrentModel,
+      // ));
+      setState(() {});
+    } catch (error) {
+      log("error $error");
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: TextWidget(
+          label: error.toString(),
+        ),
+        backgroundColor: Colors.red,
+      ));
+    } finally {
+      setState(() {
+        //scrollListToEND();
+        _isTyping = false;
+      });
+    }
   }
 
   Widget buildTextContentOfContainer(
